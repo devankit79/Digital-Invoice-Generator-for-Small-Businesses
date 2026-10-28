@@ -71,7 +71,3 @@ Invoice numbers are unique and sequential within an Indian financial year, e.g. 
 | GET | `/api/invoices/:id` | Retrieve one saved invoice |
 
 The API discards client-supplied totals and calculates its own. Request bodies are capped at 200 KB, and invoice inputs have size/range constraints. Invoice records are immutable through the provided API.
-
-## Reference
-
-[John Uberbacher's invoice-generator](https://github.com/johnuberbacher/invoice-generator) was reviewed via its README and package manifest for the basic invoice/PDF workflow. This implementation is independently authored; reference code is not copied. See `docs/APPROVED_SCOPE.md` for scope and report requirements.
