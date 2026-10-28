@@ -9,3 +9,4 @@ docs/screenshots/
 .DS_Store
 tmp/
 .vercel/
+output/

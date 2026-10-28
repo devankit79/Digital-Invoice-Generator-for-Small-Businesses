@@ -3,13 +3,13 @@ import autoTable from "jspdf-autotable";
 import { formatDate, states } from "../../shared/invoice.js";
 const amount = (value) =>
   `INR ${(value / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-export function downloadInvoice(invoice) {
+export function createInvoicePdf(invoice) {
   const { data, totals, number } = invoice;
   const doc = new jsPDF();
   const width = 174;
   const text = (value, x, y, size = 10) => {
     doc.setFontSize(size);
-    doc.text(String(value), x, y);
+    doc.text(Array.isArray(value) ? value : String(value), x, y);
   };
   doc.setFillColor(20, 62, 53);
   doc.rect(0, 0, 210, 9, "F");
@@ -120,5 +120,10 @@ export function downloadInvoice(invoice) {
       align: "right",
     });
   }
-  doc.save(`${(number || "invoice-preview").replaceAll("/", "-")}.pdf`);
+  return doc;
+}
+
+export function downloadInvoice(invoice) {
+  const doc = createInvoicePdf(invoice);
+  doc.save(`${(invoice.number || "invoice-preview").replaceAll("/", "-")}.pdf`);
 }
