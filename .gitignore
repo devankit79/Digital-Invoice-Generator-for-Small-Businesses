@@ -1,0 +1,10 @@
+node_modules/
+client/dist/
+.env
+.env.*
+!.env.example
+!.env.atlas.example
+.data/
+docs/screenshots/
+.DS_Store
+tmp/
