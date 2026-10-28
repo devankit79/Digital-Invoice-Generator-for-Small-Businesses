@@ -8,3 +8,4 @@ client/dist/
 docs/screenshots/
 .DS_Store
 tmp/
+.vercel/

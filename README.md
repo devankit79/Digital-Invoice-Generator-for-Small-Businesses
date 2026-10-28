@@ -42,7 +42,29 @@ npm run build
 npm start
 ```
 
-The production Express server serves `client/dist`. Open http://127.0.0.1:4000. The default server binds to loopback for a local single-business deployment. This project has no authentication; add authentication and access controls before making it accessible publicly. For separate Vercel/Railway deployment, configure frontend `/api` rewrites to the Express host and provide an external MongoDB URI; static frontend hosting alone does not run the backend.
+The local production Express server serves `client/dist`. Open http://127.0.0.1:4000. It binds to loopback for a local single-business deployment. This project has no user accounts; use deployment access protection for private records until authentication is added.
+
+## Deploy on Vercel
+
+Import this GitHub repository and keep the **Root Directory at the repository root** (not `client`). `vercel.json` provides the build settings, static output directory, API routing and Mumbai function region. Framework preset: **Other**. Build command: `npm run build`. Output directory: `client/dist`. Keep the configured install command: `MONGOMS_DISABLE_POSTINSTALL=1 npm ci`; it prevents downloading a local MongoDB binary during the cloud build. No custom start command or `PORT` variable is needed.
+
+Add these server-side environment variables for the deployment environment:
+
+| Name | Value |
+|---|---|
+| `MONGODB_URI` | The complete working Atlas URI from your private local `.env` |
+| `LOCAL_MONGODB` | `false` |
+| `USE_MEMORY_DB` | `false` |
+
+Never prefix the database URI with `VITE_`, put it in frontend code, or commit it. Redeploy after changing environment variables.
+
+The `api/index.js` function imports the Express API without starting a local listener or a MongoDB subprocess. Concurrent requests share a connection attempt; each function instance reuses its established connection with a bounded pool. A failed connection returns a safe 503 JSON response and is retried on a later request. Invoice responses are not cached.
+
+### Atlas network access
+
+The laptop IP entry alone does not allow connections from Vercel. Before testing saved invoices online, allow the deployed backend's outbound IP addresses in Atlas. If using Vercel static outbound IPs, add those specific addresses. Where a deployment has dynamic outbound addresses, a broad `0.0.0.0/0` Atlas rule would allow connection attempts from any IPv4 address and should only be enabled after an explicit decision; database credentials and TLS are still required. This repository does not change Atlas network rules automatically.
+
+After deployment, visit `/api/health`; it should return `database: "connected"`. Then create a demo invoice, save it, reload the page, and confirm it appears in history. A 503 response indicates missing/incorrect credentials, unavailable Atlas, or network access restrictions. A successful local build is not evidence of a successful cloud deployment.
 
 ## Structure
 

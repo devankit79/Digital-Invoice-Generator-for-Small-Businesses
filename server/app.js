@@ -24,6 +24,10 @@ const Counter =
 export function createApp() {
   const app = express();
   app.disable("x-powered-by");
+  app.use("/api", (_req, res, next) => {
+    res.set("Cache-Control", "no-store");
+    next();
+  });
   app.use(express.json({ limit: "200kb" }));
   app.get("/api/health", (_req, res) =>
     res.json({
